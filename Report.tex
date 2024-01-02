@@ -1,0 +1,128 @@
+\documentclass[12pt]{article}
+\usepackage[normalem]{ulem}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+
+
+\begin{document}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+\begin{Center}
+{\fontsize{16pt}{19.2pt}\selectfont \textbf{Gebze Technical University}}
+\end{Center}
+\begin{Center}
+{\fontsize{16pt}{19.2pt}\selectfont \textbf{Computer Engineering}}
+\end{Center}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+\begin{Center}
+{\fontsize{16pt}{19.2pt}\selectfont \textbf{CSE 344 - 2021 Spring}}
+\end{Center}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+\begin{Center}
+{\fontsize{16pt}{19.2pt}\selectfont \textbf{MIDTERM REPORT}}
+\end{Center}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+\begin{Center}
+{\fontsize{16pt}{19.2pt}\selectfont \textbf{BERKE SÜSLÜ}}
+\end{Center}
+\begin{Center}
+{\fontsize{16pt}{19.2pt}\selectfont \textbf{161044076}}
+\end{Center}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+\section{INTRODUCTION}
+\subsection{Problem Definition }
+\begin{justify}
+Simple Covid-19 vaccination simulation with producer/consumer paradigm.
+\end{justify}
+\subsection{System Requirements}
+
+\vspace{\baselineskip}
+\begin{justify}
+Any computer with Ubuntu 14.04 LTS 32-bit Operating System.
+\end{justify}
+\section{METHOD}
+\subsection{Problem Solution Approach}
+Firstly, the program reads the parameters using getopt(). Then, it checks inputs are valid or not. If there is an invalid input, program tells invalid input and exits. After that, program creates shared memory segments.All semaphore, critical region, pid of processes etc. is in the shared memory.Also program opens the input file before creating child processes. Then, program creates $n+v+c$ child process.When all child processes are created, the parent process send a signal (SIGUSR1) to wake up all nurses and vaccinators.\\
+Nurse:\\
+The nurse processes read the input file and add into buffer in the shared memory. (The buffer is basically 2 integer variable.) There are 4 semaphore is used in order to synchronize processes. The usage of semaphores is mostly same as examples in the slides of this course. (Realize the nurses are producer) Also I did not use a semaphore to reading file because there are no race condition.(The processes works as cooperative) When reading file is finished, the last nurse process prints the terminate message and terminates.\\
+Vaccinator:\\
+The vaccinator processes wait until there are enough vaccine in the buffer.(at least 1 vaccine1 and 1 vaccine2 in the buffer).Synchronization is made using semaphore again.(Realize the vaccinators are consumer) When there are enough vaccine in the buffer, vaccinator calls the citizen process using signals (SIGUSR1) with priority queue(only the first dose of vaccine,the other dose are randomly) and waits citizen process.(In order to send citizen away.) When the citizen process wakes the vaccinator,repeat this steps until all citizen is vaccinated t times.After that, the number of vaccinated doses is sent to main process and the vaccinators terminate.\\
+Citizen:\\
+The citizen processes are waiting a signal from vaccinator.When the signal is catched, the citizen processes prints the message and wake up the vaccinator who wakes him.After the citizen vaccinated t times,the citizen prints remaining citizen and terminates.\\
+\\
+When all child processes terminates, the parent processes prints the exit message, frees all resources and terminates.
+
+\section{RESULT}
+\subsection{Test Cases}
+I used an example input file (9 vaccine1 and 9 vaccine2) with some parameters and checked with valgrind for memory leaks.
+\subsection{Running Results}
+With n:3 v:2 c:3 b:11 t:3 i:inputpath(includes 9 vaccine1 and 9 vaccine2)
+\includegraphics[]{"example n3 v2 c3 b11 t3.jpg"}\\
+With n:5 v:5 c:9 b:11 t:1 i:inputpath(includes 9 vaccine1 and 9 vaccine2)
+\includegraphics[]{"example1 n5 v5 c9 b11 t1.jpg"}
+\includegraphics[]{"example2 n5 v5 c9 b11 t1.jpg"}
+\end{document}
